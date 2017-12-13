@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { addPost } from '../actions'
 
 import Categories from './categories';
+import Post from './post';
 
 class App extends Component {
   state = {
@@ -12,7 +13,7 @@ class App extends Component {
 
   render() {
     const { allPost } = this.props
-
+    console.log(allPost);
     return (
       <div className="App container">
         <div className="row">
@@ -23,7 +24,9 @@ class App extends Component {
           </div>
         </div>
 
-        <Categories posts={allPost}/>
+        { /* <Categories posts={allPost} /> */ }
+
+        <Post post={allPost[0]} />
 
       </div>
     );

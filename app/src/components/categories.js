@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
 import PostSnippet from './post-snippet';
+//import Modal from 'react-modal'
 
 export const CATEGORY_ALL = 'CATEGORY_ALL'
 export const CATEGORY_REACT = 'react'
 export const CATEGORY_REDUX = 'redux'
 export const CATEGORY_UDACITY = 'udacity'
 
+export const SORT_BY_SCORE = 'voteScore'
+export const SORT_BY_MOST_RECENT = 'timestamp'
+
 class Categories extends Component {
 
   state = {
-    categorySelected: CATEGORY_ALL
+    categorySelected: CATEGORY_ALL,
+    sortProp: SORT_BY_SCORE
   }
 
   openCategory = (category) => {
@@ -18,9 +23,15 @@ class Categories extends Component {
     }))
   }
 
+  sortPostBy = (prop) => {
+    this.setState(() => ({
+      sortProp: prop
+    }))
+  }
+
   render() {
     const { posts } = this.props
-    const { categorySelected } = this.state
+    const { categorySelected, sortProp} = this.state
 
     return (
       <div className="category">
@@ -90,9 +101,18 @@ class Categories extends Component {
 
                       <div className="col-xs-6 text-left">
                         <div className="btn-group-vertical" role="group">
-                          <button type="button" className="btn btn-default">Nothing</button>
-                          <button type="button" className="btn btn-default">Score</button>
-                          <button type="button" className="btn btn-default">Recent</button>
+                          <button
+                            type="button"
+                            className="btn btn-default"
+                            onClick={() => this.sortPostBy(SORT_BY_SCORE)}>
+                              Score
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-default"
+                            onClick={() => this.sortPostBy(SORT_BY_MOST_RECENT)}>
+                              Most Recent
+                          </button>
                         </div>
                       </div>
 
@@ -122,6 +142,12 @@ class Categories extends Component {
                 { posts.filter(post =>
                     post.category === categorySelected
                     || categorySelected === CATEGORY_ALL)
+                  .sort((a,b) => {
+                    if (a[sortProp] < b[sortProp]) return -1
+                    else if (a[sortProp] > b[sortProp]) return 1
+                    else return 0
+                  })
+                  .reverse()
                   .map((post) => (
                     <PostSnippet post={post} key={post.id}/>
                   ))}
