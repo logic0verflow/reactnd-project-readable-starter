@@ -1,24 +1,43 @@
 import React, { Component } from 'react'
 import PostSnippet from './post-snippet'
 import ToggleDisplay from 'react-toggle-display';
+import { addPost } from '../actions'
+import { connect } from 'react-redux'
 
 
 class Post extends Component {
 
   state = {
-    beingModified: false
+    beingModified: false,
+    postChanges: {
+      ...this.props.post
+    }
   }
 
   toggleEdit = () => {
+    const post = this.props.post
     this.setState(() => ({
-      beingModified: !this.state.beingModified
+      beingModified: !this.state.beingModified,
+      postChanges: {
+        ...post
+      },
+    }))
+  }
+
+  onTitleChange = (e) => {
+    const value = e.target.value
+    const name = e.target.name
+    this.setState(() => ({
+      postChanges: {
+        ...this.props.post,
+        [name]: value
+      }
     }))
   }
 
   render() {
-    const post = this.props.post
-    const { body } = post
-    const { beingModified } = this.state
+    const { beingModified , postChanges } = this.state
+    const { submitPost, post } = this.props
 
     return (
       <div>
@@ -50,7 +69,7 @@ class Post extends Component {
               <div className="col-xs-9 text-left">
                 <p>{post.title}</p>
                 <p>by {post.author} at {post.timestamp}</p>
-                <p>{body}</p>
+                <p>{post.body}</p>
               </div>
               <div className="col-xs-2 text-right">{post.category}</div>
             </div>
@@ -66,19 +85,53 @@ class Post extends Component {
             <div className="row">
 
               <div className="col-xs-1">
-                <p>{post.voteScore}</p>
+                <p>{postChanges.voteScore}</p>
               </div>
 
               <div className="col-xs-9 text-left">
-                <input type="text" name="post-title" placeholder="Post Title"/><br/>
-                <p>by {post.author} at {post.timestamp}</p>
-                <input type="text" name="post-body" placeholder="Post Body"/><br/>
+                <div className="row">
+                  <div className="col-xs-12">
+                    <input
+                    name="title"
+                    type="text"
+                    placeholder="Post Title"
+                    value={postChanges.title}
+                    onChange={(event) => this.onTitleChange(event)} /><br/>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-xs-12">
+                    <p>by {postChanges.author} at {postChanges.timestamp}</p>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-xs-12">
+                    <textarea
+                      name="body"
+                      placeholder="Post Body"
+                      value={postChanges.body}
+                      onChange={(event) => this.onTitleChange(event)} /><br/>
+                  </div>
+                </div>
+
               </div>
 
               <div className="col-xs-2 text-right">
-                <input type="text" name="post-category" placeholder="Post Category"/><br/>
+
               </div>
             </div>
+
+            <button
+              type="button"
+              className="btn btn-default"
+              onClick={() => {
+                submitPost(this.state.postChanges)
+                this.toggleEdit()
+              }}>
+                Submit
+            </button>
 
           </form>
         </ToggleDisplay>
@@ -88,4 +141,13 @@ class Post extends Component {
   }
 }
 
-export default Post
+function mapDispatchToProps (dispatch) {
+  return {
+    submitPost: (post) => dispatch(addPost(post))
+  }
+}
+
+export default connect(
+  undefined,
+  mapDispatchToProps
+)(Post)

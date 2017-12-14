@@ -13,7 +13,6 @@ class App extends Component {
 
   render() {
     const { allPost } = this.props
-    console.log(allPost);
     return (
       <div className="App container">
         <div className="row">

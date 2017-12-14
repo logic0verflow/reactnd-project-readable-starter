@@ -31,17 +31,20 @@ const initialPostsState = {
 }
 
 function post ( state = initialPostsState, action) {
-  const { post } = action
+  let { post } = action
+
+  // if no post id exist, its a new post being created and needs an id
+  if (post && !post.id) {
+    const hash = require('object-hash');
+    post.id = hash(post)
+  }
 
   switch (action.type) {
     case ADD_POST :
-      return {
-        ...state,
-        allPost: {
-          ...state.allPost,
-          post
-        }
-      }
+      let updates = { ...state }
+      updates.allPost[post.id] = post
+      return updates
+
     default :
       return state
   }
