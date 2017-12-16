@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PostSnippet from './post-snippet';
-//import Modal from 'react-modal'
+import Post from './post';
+import Modal from 'react-modal'
 
 export const CATEGORY_ALL = 'CATEGORY_ALL'
 export const CATEGORY_REACT = 'react'
@@ -14,24 +15,25 @@ class Categories extends Component {
 
   state = {
     categorySelected: CATEGORY_ALL,
-    sortProp: SORT_BY_SCORE
+    sortProp: SORT_BY_SCORE,
+    postModalOpen: false,
+    selectedPost: null,
   }
 
-  openCategory = (category) => {
-    this.setState(() => ({
-      categorySelected: category
-    }))
-  }
+  openCategory = (categorySelected) => { this.setState(() => ({ categorySelected })) }
+  sortPostBy = (sortProp) => { this.setState(() => ({ sortProp })) }
 
-  sortPostBy = (prop) => {
+  openPostModal = (selectedPost) => {
     this.setState(() => ({
-      sortProp: prop
+      postModalOpen: true,
+      selectedPost
     }))
   }
+  closePostModal = () => { this.setState(() => ({ postModalOpen: false })) }
 
   render() {
     const { posts } = this.props
-    const { categorySelected, sortProp} = this.state
+    const { categorySelected, sortProp, postModalOpen} = this.state
 
     return (
       <div className="category">
@@ -125,7 +127,11 @@ class Categories extends Component {
 
                   <div className="col-xs-4 text-right">
                     <div className="row"><div className="col-xs-12">
-                      <button className="btn btn-default" type="button">Add Post</button>
+                      <button
+                        className="btn btn-default"
+                        type="button">
+                          Add Post
+                      </button>
                     </div></div>
                   </div>
 
@@ -149,13 +155,28 @@ class Categories extends Component {
                   })
                   .reverse()
                   .map((post) => (
-                    <PostSnippet post={post} key={post.id}/>
+                    <button
+                      key={post.id}
+                      onClick={() => this.openPostModal(post)}>
+                      <PostSnippet post={post} />
+                    </button>
                   ))}
               </div>
             </div></div>
 
           </div>
         </div></div>
+
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={postModalOpen}
+          onRequestClose={this.closePostModal}
+          contentLabel='Modal'
+        >
+          {postModalOpen && <Post post={this.state.selectedPost} />}
+        </Modal>
+
       </div>
     );
   }

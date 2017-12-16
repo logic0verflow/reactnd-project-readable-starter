@@ -1,5 +1,6 @@
 import {
-  ADD_POST
+  ADD_POST,
+  OPEN_POST,
 } from '../actions'
 
 
@@ -27,10 +28,12 @@ const initialPostsState = {
       deleted: false,
       commentCount: 0
     }
-  }
+  },
+  selectedPostID: null,
 }
 
 function post ( state = initialPostsState, action) {
+
   let { post } = action
 
   // if no post id exist, its a new post being created and needs an id
@@ -44,7 +47,11 @@ function post ( state = initialPostsState, action) {
       let updates = { ...state }
       updates.allPost[post.id] = post
       return updates
-
+    case OPEN_POST :
+      return {
+        ...state,
+        selectedPostID: post.id
+      }
     default :
       return state
   }

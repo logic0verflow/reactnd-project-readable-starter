@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import PostSnippet from './post-snippet'
 import ToggleDisplay from 'react-toggle-display';
 import { addPost } from '../actions'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 
 class Post extends Component {
@@ -24,7 +24,7 @@ class Post extends Component {
     }))
   }
 
-  onTitleChange = (e) => {
+  onChange = (e) => {
     const value = e.target.value
     const name = e.target.name
     this.setState(() => ({
@@ -47,7 +47,14 @@ class Post extends Component {
 
 
         <div className="row">
-          <div className="col-xs-12 text-right">
+
+          <div className="col-xs-6 text-left">
+            <Link to="/">
+              <div className="btn btn-default">Back</div>
+            </Link>
+          </div>
+
+          <div className="col-xs-6 text-right">
             <button type="button" className="btn btn-default">Delete</button>
             <button
               type="button"
@@ -56,13 +63,14 @@ class Post extends Component {
                 Edit
             </button>
           </div>
+
         </div>
 
 
         {/* ***** Normal Post View ***** */}
 
 
-        <ToggleDisplay show={!this.state.beingModified}>
+        <ToggleDisplay show={!beingModified}>
           <div className="post-snippet">
             <div className="row">
               <div className="col-xs-1"><p>{post.voteScore}</p></div>
@@ -80,7 +88,7 @@ class Post extends Component {
         {/* ***** Editing Post View ***** */}
 
 
-        <ToggleDisplay show={this.state.beingModified}>
+        <ToggleDisplay show={beingModified}>
           <form className="post-snippet">
             <div className="row">
 
@@ -96,7 +104,7 @@ class Post extends Component {
                     type="text"
                     placeholder="Post Title"
                     value={postChanges.title}
-                    onChange={(event) => this.onTitleChange(event)} /><br/>
+                    onChange={(event) => this.onChange(event)} /><br/>
                   </div>
                 </div>
 
@@ -112,7 +120,7 @@ class Post extends Component {
                       name="body"
                       placeholder="Post Body"
                       value={postChanges.body}
-                      onChange={(event) => this.onTitleChange(event)} /><br/>
+                      onChange={(event) => this.onChange(event)} /><br/>
                   </div>
                 </div>
 
@@ -141,6 +149,12 @@ class Post extends Component {
   }
 }
 
+function mapStateToProps ({ allPost }, { id }) {
+  return {
+    post: allPost[id]
+  }
+}
+
 function mapDispatchToProps (dispatch) {
   return {
     submitPost: (post) => dispatch(addPost(post))
@@ -148,6 +162,6 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(
-  undefined,
+  mapStateToProps,
   mapDispatchToProps
 )(Post)
