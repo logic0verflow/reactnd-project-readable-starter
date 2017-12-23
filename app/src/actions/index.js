@@ -1,27 +1,40 @@
-export const ADD_POST = 'ADD_POST'
-export const REMOVE_POST = 'REMOVE_POST'
 export const OPEN_POST = 'OPEN_POST'
-
-export function addPost({ id, title, body, author, category }) {
-
-  return {
-    type: ADD_POST,
-    post: {
-      id,
-      timestamp: Date.now(),
-      title,
-      body,
-      author,
-      category,
-      voteScore: 1,
-      deleted: false
-    }
-  }
-}
+export const REFRESH_CATEGORIES = 'REFRESH_CATEGORIES'
+export const ADD_COMMENT = 'ADD_COMMENT'
+export const REFRESH_POST_COMMENTS = 'REFRESH_POST_COMMENTS'
+export const REPLACE_COMMENT = 'REPLACE_COMMENT'
 
 export function openPost(post) {
   return {
     type: OPEN_POST,
     post,
+  }
+}
+
+export function refreshCategories(categories) {
+  return {
+    type: REFRESH_CATEGORIES,
+    categories,
+  }
+}
+
+export function addComment(comment) {
+  return {
+    type: ADD_COMMENT,
+    comment
+  }
+}
+
+export function replaceComment(comment) {
+  return {
+    type: REPLACE_COMMENT,
+    comment
+  }
+}
+
+export function refreshPostComments(comments) {
+  return {
+    type: REFRESH_POST_COMMENTS,
+    comments
   }
 }

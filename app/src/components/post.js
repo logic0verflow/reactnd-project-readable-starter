@@ -1,43 +1,51 @@
 import React, { Component } from 'react'
-import ToggleDisplay from 'react-toggle-display';
-import { addPost } from '../actions'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-
+import { refreshPostComments } from '../actions'
+import VoteScore from './VoteScore'
+import Comment from './Comment'
+import CreateComment from './CreateComment'
+import {
+  fetchPostDetails,
+  fetchPostComments,
+} from '../utils/api'
 
 class Post extends Component {
 
   state = {
-    beingModified: false,
-    postChanges: {
-      ...this.props.post
-    }
+    details: {},
+    comments: [],
+    creatingComment: false,
   }
 
-  toggleEdit = () => {
-    const post = this.props.post
+  getPostDetails() {
+    fetchPostDetails(this.props.id)
+    .then(details => this.setState(() => ({
+      ...this.state,
+      details
+    })))
+  }
+
+  getAllComments() {
+    fetchPostComments(this.props.id)
+    .then(comments => this.props.updateComments(comments))
+  }
+
+  onCreateComment() {
     this.setState(() => ({
-      beingModified: !this.state.beingModified,
-      postChanges: {
-        ...post
-      },
+      ...this.state,
+      creatingComment: !this.state.creatingComment,
     }))
   }
 
-  onChange = (e) => {
-    const value = e.target.value
-    const name = e.target.name
-    this.setState(() => ({
-      postChanges: {
-        ...this.props.post,
-        [name]: value
-      }
-    }))
+  componentDidMount() {
+    this.getPostDetails()
+    this.getAllComments()
   }
 
   render() {
-    const { beingModified , postChanges } = this.state
-    const { submitPost, post } = this.props
+    const { details:post } = this.state
+    const { comments } = this.props
 
     return (
       <div>
@@ -55,13 +63,11 @@ class Post extends Component {
           </div>
 
           <div className="col-xs-6 text-right">
-            <button type="button" className="btn btn-default">Delete</button>
-            <button
-              type="button"
-              className="btn btn-default"
-              onClick={() => { this.toggleEdit() }}>
-                Edit
-            </button>
+
+            <Link to={"/edit-post-" + post.id}>
+              <div className="btn btn-default">Edit</div>
+            </Link>
+
           </div>
 
         </div>
@@ -70,96 +76,55 @@ class Post extends Component {
         {/* ***** Normal Post View ***** */}
 
 
-        <ToggleDisplay show={!beingModified}>
-          <div className="post-snippet">
-            <div className="row">
-              <div className="col-xs-1"><p>{post.voteScore}</p></div>
-              <div className="col-xs-9 text-left">
-                <p>{post.title}</p>
-                <p>by {post.author} at {post.timestamp}</p>
-                <p>{post.body}</p>
-              </div>
-              <div className="col-xs-2 text-right">{post.category}</div>
+        <div className="post-snippet">
+          <div className="row">
+            <div className="col-xs-1">
+              <VoteScore itemType="posts" id={post.id} voteScore={post.voteScore}/>
             </div>
+            <div className="col-xs-9 text-left">
+              <h4>{post.title}</h4>
+              <p>by {post.author} at {new Date(post.timestamp).toLocaleString()}</p>
+              <p>{post.body}</p>
+            </div>
+            <div className="col-xs-2 text-right">{post.category}</div>
           </div>
-        </ToggleDisplay>
-
-
-        {/* ***** Editing Post View ***** */}
-
-
-        <ToggleDisplay show={beingModified}>
-          <form className="post-snippet">
-            <div className="row">
-
-              <div className="col-xs-1">
-                <p>{postChanges.voteScore}</p>
-              </div>
-
-              <div className="col-xs-9 text-left">
-                <div className="row">
-                  <div className="col-xs-12">
-                    <input
-                    name="title"
-                    type="text"
-                    placeholder="Post Title"
-                    value={postChanges.title}
-                    onChange={(event) => this.onChange(event)} /><br/>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-xs-12">
-                    <p>by {postChanges.author} at {postChanges.timestamp}</p>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-xs-12">
-                    <textarea
-                      name="body"
-                      placeholder="Post Body"
-                      value={postChanges.body}
-                      onChange={(event) => this.onChange(event)} /><br/>
-                  </div>
-                </div>
-
-              </div>
-
-              <div className="col-xs-2 text-right">
-
-              </div>
-            </div>
-
+        </div>
+        <div className="row">
+          <div className="col-xs-4"></div>
+          <div className="col-xs-4"><h3>{comments.length} Comments</h3></div>
+          <div className="col-xs-4 text-right">
             <button
               type="button"
-              className="btn btn-default"
-              onClick={() => {
-                submitPost(this.state.postChanges)
-                this.toggleEdit()
-              }}>
-                Submit
-            </button>
+              onClick={() => this.onCreateComment()}
+              className="btn btn-default">Add Comment</button>
+          </div>
+        </div>
 
-          </form>
-        </ToggleDisplay>
+        <CreateComment parentID={post.id} show={this.state.creatingComment}/>
+
+        {comments
+          .filter(comment => comment.deleted === false)
+          .map(comment => (
+          <Comment details={comment} key={comment.id} />
+        ))}
 
       </div>
     )
   }
 }
 
-function mapStateToProps ({ allPost }, { id }) {
+function mapStateToProps({ selectedPostComments }) {
   return {
-    post: allPost[id]
+    comments: selectedPostComments
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return {
-    submitPost: (post) => dispatch(addPost(post))
+    updateComments: (data) => dispatch(refreshPostComments(data)),
   }
 }
+
 
 export default connect(
   mapStateToProps,

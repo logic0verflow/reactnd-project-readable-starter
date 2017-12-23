@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import './App.css';
 import { connect } from 'react-redux'
-import { addPost } from '../actions'
-import PostSnippet from './post-snippet';
+import { refreshCategories } from '../actions'
+import { CATEGORY_ALL } from '../reducers'
 import Post from './post';
 import ListPosts from './ListPosts'
+import EditPost from './EditPost'
+import DeletePost from './DeletePost'
+import CreatePost from './CreatePost'
 import { Route, Link, withRouter } from 'react-router-dom'
-
-export const CATEGORY_ALL = 'CATEGORY_ALL'
-export const CATEGORY_REACT = 'react'
-export const CATEGORY_REDUX = 'redux'
-export const CATEGORY_UDACITY = 'udacity'
+import { fetchCategories } from '../utils/api'
 
 export const SORT_BY_SCORE = 'voteScore'
 export const SORT_BY_MOST_RECENT = 'timestamp'
@@ -22,14 +21,26 @@ class App extends Component {
     sortProp: SORT_BY_MOST_RECENT,
   }
 
-
-  openCategory = (categorySelected) => {this.setState(() => ({ categorySelected }))}
+  openCategory = (categorySelected) => { this.setState(() => ({ categorySelected }))}
   sortPostBy = (sortProp) => { this.setState(() => ({ sortProp }))}
 
 
+  handleChange = (e) => {
+    const value = e.target.value
+    const name = e.target.name
+    this.setState(() => ({
+      ...this.state,
+      [name]: value,
+    }))
+  }
+
+  componentDidMount() {
+    fetchCategories().then(categories => this.props.updateCategories(categories))
+  }
+
   render() {
-    const { selectedPostID } = this.props
-    const { categorySelected, sortProp} = this.state
+    const { selectedPostID, categories } = this.props
+    const { categorySelected, sortProp } = this.state
 
     return (
       <div className="App container">
@@ -60,84 +71,47 @@ class App extends Component {
                   <div className="row posts-pane-menu">
 
 
+                    <form>
+
                     {/* ***** Category Filter ***** */}
-
-
-                    <div className="col-xs-4 text-center">
-                      <div className="row">
-                        <div className="col-xs-6 text-right">
-                          <p>Category</p>
-                        </div>
-
-                        <div className="col-xs-6 text-left">
-                          <div className="btn-group-vertical" role="group">
-                            <button
-                              type="button"
-                              className="btn btn-default"
-                              onClick={() => this.openCategory(CATEGORY_ALL)}>
-                                All
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-default"
-                              onClick={() => this.openCategory(CATEGORY_REACT)}>
-                                React
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-default"
-                              onClick={() => this.openCategory(CATEGORY_REDUX)}>
-                                Redux
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-default"
-                              onClick={() => this.openCategory(CATEGORY_UDACITY)}>
-                                Udacity
-                            </button>
-                          </div>
+                      <div className="col-xs-4">
+                        <div className="form-group">
+                          <label htmlFor="filterByCategory">Category</label>
+                          <select
+                            name="categorySelected"
+                            className="form-control"
+                            value={categorySelected}
+                            onChange={this.handleChange}>
+                            {categories.map((category) => (
+                              <option value={category} key={category}>{category}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
-                    </div>
 
-
-                    {/* ***** Sort Method ***** */}
-
-
-                    <div className="col-xs-4">
-                      <div className="row">
-
-                        <div className="col-xs-6 text-right">
-                          <p>Sort By</p>
+                      {/* ***** Sort Method ***** */}
+                      <div className="col-xs-4">
+                        <div className="form-group">
+                          <label htmlFor="sortBy">Sort By</label>
+                          <select
+                            name="sortProp"
+                            className="form-control"
+                            value={sortProp}
+                            onChange={this.handleChange}
+                            >
+                            <option value={SORT_BY_MOST_RECENT}>Most Recent</option>
+                            <option value={SORT_BY_SCORE}>Highest Score</option>
+                          </select>
                         </div>
-
-                        <div className="col-xs-6 text-left">
-                          <div className="btn-group-vertical" role="group">
-                            <button
-                              type="button"
-                              className="btn btn-default"
-                              onClick={() => this.sortPostBy(SORT_BY_SCORE)}>
-                                Highest Score
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-default"
-                              onClick={() => this.sortPostBy(SORT_BY_MOST_RECENT)}>
-                                Most Recent
-                            </button>
-                          </div>
-                        </div>
-
                       </div>
-                    </div>
-
+                    </form>
 
                     {/* ***** Add Post Button ***** */}
 
 
                     <div className="col-xs-4 text-right">
                       <div className="row"><div className="col-xs-12">
-                      <Link to="/edit-post">
+                      <Link to="/create-post">
                         <button
                           className="btn btn-default">
                             Add Post
@@ -167,15 +141,53 @@ class App extends Component {
         {/***** Single Post View *****/}
 
 
-        <Route path={"/post-" + selectedPostID} render={() => (
+        <Route path={"/post"} render={() => (
           <div>
-          <h1>post</h1>
-          <Post id={selectedPostID}/>
+            <h1>post</h1>
+            <Post
+              route={this.props}
+              id={
+                /* If a post wasn't selected, try obtaining the id from URL */
+                selectedPostID
+                ? selectedPostID
+                : this.props.location.pathname.replace('/post/','')}
+              beingModified={false}
+            />
           </div>
         )}/>
 
 
-        <Route path="/edit-post" render={() => (<h1>edit</h1>)}/>
+        {/***** EDIT Single Post View *****/}
+
+
+        <Route path={`/edit-post-${selectedPostID}`} render={() => (
+          <div>
+            <h1>edit post</h1>
+            <EditPost id={selectedPostID} />
+          </div>
+        )}/>
+
+
+        {/***** DELETE Single Post View *****/}
+
+
+        <Route path={`/delete-post-${selectedPostID}`} render={() => (
+          <div>
+            <h1>delete post</h1>
+            <DeletePost id={selectedPostID} />
+          </div>
+        )}/>
+
+
+        {/***** Create new post *****/}
+
+
+        <Route path="/create-post" render={() => (
+          <div>
+            <h1>Create Post</h1>
+            <CreatePost />
+          </div>
+        )}/>
 
       </div>
 
@@ -183,16 +195,16 @@ class App extends Component {
   }
 }
 
-function mapStateToProps ({ allPost, selectedPostID}) {
+function mapStateToProps ({ selectedPostID, categories, otherCategories}) {
   return {
-    allPost: Object.values(allPost),
-    selectedPostID
+    selectedPostID,
+    categories: [...categories, ...otherCategories]
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    submitPost: (data) => dispatch(addPost(data)),
+    updateCategories: (data) => dispatch(refreshCategories(data)),
   }
 }
 
