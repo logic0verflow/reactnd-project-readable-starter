@@ -4,9 +4,10 @@ import {
   ADD_COMMENT,
   REFRESH_POST_COMMENTS,
   REPLACE_COMMENT,
+  REMOVE_COMMENT,
 } from '../actions'
 
-export const CATEGORY_ALL = 'all_categories'
+export const CATEGORY_ALL = 'All'
 
 const initialAppState = {
   selectedPostID: null,
@@ -38,13 +39,20 @@ function app ( state = initialAppState, action) {
         selectedPostComments: [ ...action.comments ]
       }
     case REPLACE_COMMENT :
-      let comments = [ ...state.selectedPostComments ]
+      let comments = state.selectedPostComments
       comments = comments.map(comment => comment.id === action.comment.id
         ? action.comment
         : comment)
       return {
         ...state,
         selectedPostComments: comments
+      }
+    case REMOVE_COMMENT :
+      const commentID = action.commentID
+      const postComments = state.selectedPostComments
+      return {
+        ...state,
+        selectedPostComments: postComments.filter(({ id }) => id !== commentID)
       }
     default :
       return state

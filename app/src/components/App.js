@@ -10,6 +10,7 @@ import DeletePost from './DeletePost'
 import CreatePost from './CreatePost'
 import { Route, Link, withRouter } from 'react-router-dom'
 import { fetchCategories } from '../utils/api'
+import { toUpperFirstChar } from '../utils/helpers'
 
 export const SORT_BY_SCORE = 'voteScore'
 export const SORT_BY_MOST_RECENT = 'timestamp'
@@ -39,8 +40,8 @@ class App extends Component {
   }
 
   render() {
-    const { selectedPostID, categories } = this.props
     const { categorySelected, sortProp } = this.state
+    const { selectedPostID, categories } = this.props
 
     return (
       <div className="App container">
@@ -60,7 +61,7 @@ class App extends Component {
 
         <Route exact path="/" render={() => (
           <div>
-          <h1>root</h1>
+          <h1>{toUpperFirstChar(categorySelected)}</h1>
 
           <div className="row"><div className="col-xs-12">
 
@@ -83,7 +84,7 @@ class App extends Component {
                             value={categorySelected}
                             onChange={this.handleChange}>
                             {categories.map((category) => (
-                              <option value={category} key={category}>{category}</option>
+                              <option value={category} key={category}>{toUpperFirstChar(category)}</option>
                             ))}
                           </select>
                         </div>
@@ -143,7 +144,6 @@ class App extends Component {
 
         <Route path={"/post"} render={() => (
           <div>
-            <h1>post</h1>
             <Post
               route={this.props}
               id={
@@ -162,7 +162,7 @@ class App extends Component {
 
         <Route path={`/edit-post-${selectedPostID}`} render={() => (
           <div>
-            <h1>edit post</h1>
+            <h1>Editing Post</h1>
             <EditPost id={selectedPostID} />
           </div>
         )}/>
@@ -173,7 +173,6 @@ class App extends Component {
 
         <Route path={`/delete-post-${selectedPostID}`} render={() => (
           <div>
-            <h1>delete post</h1>
             <DeletePost id={selectedPostID} />
           </div>
         )}/>

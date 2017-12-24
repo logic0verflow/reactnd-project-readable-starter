@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import uuidv1 from 'uuid/v1'
 import ToggleDisplay from 'react-toggle-display'
 import { addComment } from '../actions'
 import { connect } from 'react-redux'

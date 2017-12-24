@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import uuidv1 from 'uuid/v1'
 import { fetchCreatePost } from '../utils/api'
 
 class CreatePost extends Component {
@@ -29,7 +28,6 @@ class CreatePost extends Component {
 
   submitChanges() {
     fetchCreatePost(this.state.details)
-    .then(details => console.log('Post submitted!', details) )
   }
 
   render() {

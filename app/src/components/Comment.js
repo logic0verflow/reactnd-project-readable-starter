@@ -2,8 +2,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import VoteScore from './VoteScore'
 import ToggleDisplay from 'react-toggle-display'
-import { replaceComment } from '../actions'
-import { fetchEditComment } from '../utils/api'
+import {
+  fetchEditComment,
+  fetchDeleteComment
+} from '../utils/api'
+import {
+  replaceComment,
+  removeComment
+} from '../actions'
 
 class Comment extends Component {
 
@@ -17,6 +23,11 @@ class Comment extends Component {
   submitChanges() {
     fetchEditComment(this.props.details.id, this.state.modifiedDetails)
     .then(details => this.props.updateComment(details))
+  }
+
+  submitDelete() {
+    fetchDeleteComment(this.props.details.id)
+    .then(details => this.props.deleteComment(details.id))
   }
 
   handleChange(event) {
@@ -82,16 +93,14 @@ class Comment extends Component {
 
             <ToggleDisplay show={this.state.beingModified}>
               <input type="button" className="btn btn-default" value="Delete"
-              onClick={() => {
-                console.log('delete pressed')
-              }}/>
+                onClick={() => this.submitDelete()}/>
               <input type="button" className="btn btn-default" value="Submit"
                 onClick={() => {
                   this.toggleEdit()
                   this.submitChanges()
                 }}/>
               <input type="button" className="btn btn-default" value="Cancel"
-                onClick={() => this.toggleEdit() }/>
+                onClick={() => this.toggleEdit()}/>
 
             </ToggleDisplay>
 
@@ -105,7 +114,8 @@ class Comment extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    updateComment: (data) => dispatch(replaceComment(data))
+    updateComment: (data) => dispatch(replaceComment(data)),
+    deleteComment: (data) => dispatch(removeComment(data))
   }
 }
 

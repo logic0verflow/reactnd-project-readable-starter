@@ -3,6 +3,7 @@ export const REFRESH_CATEGORIES = 'REFRESH_CATEGORIES'
 export const ADD_COMMENT = 'ADD_COMMENT'
 export const REFRESH_POST_COMMENTS = 'REFRESH_POST_COMMENTS'
 export const REPLACE_COMMENT = 'REPLACE_COMMENT'
+export const REMOVE_COMMENT = 'REMOVE_COMMENT'
 
 export function openPost(post) {
   return {
@@ -29,6 +30,13 @@ export function replaceComment(comment) {
   return {
     type: REPLACE_COMMENT,
     comment
+  }
+}
+
+export function removeComment(commentID) {
+  return {
+    type: REMOVE_COMMENT,
+    commentID
   }
 }
 

@@ -135,3 +135,14 @@ export function fetchVoteScore(itemType, itemID, vote) {
   })
   .then(res => res.json())
 }
+
+export function fetchDeleteComment(commentID) {
+  return fetch(`http://localhost:3001/comments/${commentID}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': AUTHORIZATION_ID,
+      'Content-type': 'application/json'
+    },
+  })
+  .then(res => res.json())
+}
