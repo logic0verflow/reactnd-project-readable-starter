@@ -4,13 +4,10 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "jquery": "^3.2.1",
     "object-hash": "^1.2.0",
     "react": "^16.2.0",
-    "react-bootstrap": "^0.31.5",
     "react-dom": "^16.2.0",
     "react-icons": "^2.2.7",
-    "react-modal": "^3.1.8",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
