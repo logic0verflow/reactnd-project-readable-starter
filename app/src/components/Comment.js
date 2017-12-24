@@ -20,16 +20,20 @@ class Comment extends Component {
     }
   }
 
+  // submit changes to the server when a comment has been edited and store
+  // changes in the redux store
   submitChanges() {
     fetchEditComment(this.props.details.id, this.state.modifiedDetails)
     .then(details => this.props.updateComment(details))
   }
 
+  // submit delete operation to the server and remove the comment from the store
   submitDelete() {
     fetchDeleteComment(this.props.details.id)
     .then(details => this.props.deleteComment(details.id))
   }
 
+  // function to handle form changes of comments
   handleChange(event) {
     const name = event.target.name
     const value = event.target.value
@@ -42,6 +46,7 @@ class Comment extends Component {
     }))
   }
 
+  // Used to toggle the state of editing, hides and shows the new comment form
   toggleEdit() {
     this.setState(() => ({
       ...this.state,
@@ -57,6 +62,8 @@ class Comment extends Component {
     return (
       <div className="post-snippet">
         <div className="row">
+
+          {/* View of the comment details and the form if editing */}
 
           <div className="col-xs-1">
             <VoteScore itemType="comments" id={id} voteScore={voteScore}/>
@@ -83,6 +90,10 @@ class Comment extends Component {
 
             <p>by {author} at {new Date(timestamp).toLocaleString()}</p>
           </div>
+
+
+          {/* Comment menu section */}
+
 
           <div className="col-xs-3 text-right">
 

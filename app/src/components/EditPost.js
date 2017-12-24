@@ -8,6 +8,8 @@ import {
 
 class EditPost extends Component {
 
+  // When creating the component ensure there are state values the component
+  // can use while mounting
   constructor(props) {
     super(props)
     this.state = {
@@ -16,6 +18,8 @@ class EditPost extends Component {
     }
   }
 
+  // Get and set the details of the post, store the original details and the
+  // modified version that gets submitted to the server
   getPostDetails() {
     fetchPostDetails(this.props.id)
     .then(details => this.setState(() => ({

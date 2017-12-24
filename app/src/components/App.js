@@ -25,7 +25,7 @@ class App extends Component {
   openCategory = (categorySelected) => { this.setState(() => ({ categorySelected }))}
   sortPostBy = (sortProp) => { this.setState(() => ({ sortProp }))}
 
-
+  // function to handle changes to inputs i.e. sorting and filters
   handleChange = (e) => {
     const value = e.target.value
     const name = e.target.name
@@ -36,6 +36,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // get the categories available from the server and store in redux store
     fetchCategories().then(categories => this.props.updateCategories(categories))
   }
 
@@ -56,7 +57,7 @@ class App extends Component {
         </div>
 
 
-        {/***** Default app view with all post visible *****/}
+        {/***** Default app view, posts filtered and sorted*****/}
 
 
         <Route exact path="/" render={() => (

@@ -28,6 +28,8 @@ class ListPosts extends Component {
     })))
   }
 
+  // If the properties ever changes i.e. the category selected, then retreive
+  // the latest set of post for that category
   componentWillReceiveProps(nextProps) {
     const { categorySelected } = nextProps
     if (categorySelected === CATEGORY_ALL) {
@@ -38,6 +40,7 @@ class ListPosts extends Component {
   }
 
   componentDidMount() {
+    // fetch all the post from the server when the component is mounted
     this.getPosts()
   }
 

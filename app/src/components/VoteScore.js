@@ -12,6 +12,8 @@ class VoteScore extends Component {
     voteScore: null,
   }
 
+  // submit voting direction to the server for the item type which can be a post
+  // or a comment
   updateVoteScore(vote) {
     fetchVoteScore(this.props.itemType, this.props.id, vote)
     .then(post => this.setState(() => ({
@@ -22,6 +24,8 @@ class VoteScore extends Component {
 
   render() {
 
+    // use the score passed to this component and if the score is changed via
+    // voting, then use the new score stored in local state
     const voteScore = this.state.voteScore
       ? this.state.voteScore
       : this.props.voteScore

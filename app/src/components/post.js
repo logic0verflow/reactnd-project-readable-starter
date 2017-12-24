@@ -31,6 +31,7 @@ class Post extends Component {
     .then(comments => this.props.updateComments(comments))
   }
 
+  // Toggle to show and hide the new comment form
   onCreateComment() {
     this.setState(() => ({
       ...this.state,
@@ -102,6 +103,7 @@ class Post extends Component {
 
         <CreateComment parentID={post.id} show={this.state.creatingComment}/>
 
+        {/* only show comments that haven't been deleted */}
         {comments
           .filter(comment => comment.deleted === false)
           .map(comment => (

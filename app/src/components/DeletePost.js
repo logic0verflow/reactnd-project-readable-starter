@@ -19,6 +19,7 @@ class DeletePost extends Component {
     })))
   }
 
+  // Delete this post from the server which causes this component to unmount
   onDelete(id) {
     fetchDeletePost(id)
   }
@@ -46,7 +47,10 @@ class DeletePost extends Component {
 
         <div className="row">
           <div className="col-xs-12 text-center">
-            <Link to='/' onClick={() => {this.onDelete(this.props.id)}} className="btn btn-default">Yes</Link>
+            <Link to='/'
+              className="btn btn-default"
+              onClick={() => { this.onDelete(this.props.id) }}
+              >Yes</Link>
             <Link to={`/edit-post-${post.id}`} className="btn btn-default">No</Link>
           </div>
         </div>

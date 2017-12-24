@@ -13,6 +13,7 @@ class CreateComment extends Component {
     show: false,
   }
 
+  // submit the new comment to the server and add to the store, reset form
   submitComment() {
     const comment = {
       author: this.state.author,

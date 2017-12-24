@@ -26,6 +26,7 @@ class CreatePost extends Component {
     }))
   }
 
+  // submit the new post to the server, new post form will be closed
   submitChanges() {
     fetchCreatePost(this.state.details)
   }

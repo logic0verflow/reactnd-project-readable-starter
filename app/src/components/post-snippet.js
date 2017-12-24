@@ -7,6 +7,8 @@ import { fetchPostComments } from '../utils/api'
 
 class PostSnippet extends Component {
 
+  // set a default count of zero for the component to use since the actual
+  // amount will need to be retrieved from the server
   constructor(props) {
     super(props)
     this.state = {
