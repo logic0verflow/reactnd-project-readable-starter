@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import ToggleDisplay from 'react-toggle-display'
-import { addComment } from '../actions'
+import { addComment, toggleCommentForm } from '../actions'
 import { connect } from 'react-redux'
 import { fetchCreateComment } from '../utils/api'
 
@@ -10,7 +9,6 @@ class CreateComment extends Component {
   state = {
     body: '',
     author: '',
-    show: false,
   }
 
   // submit the new comment to the server and add to the store, reset form
@@ -24,24 +22,12 @@ class CreateComment extends Component {
     fetchCreateComment(comment)
     .then(details => this.props.addCommentToPost(details))
 
-    // Reset the add comment form and hide it
     this.setState(() => ({
+      ...this.state,
       body: '',
       author: '',
-      show: false,
     }))
-  }
-
-  componentDidMount() {
-    this.setState(() => ({
-      show: this.props.show
-    }))
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState(() => ({
-      show: nextProps.show
-    }))
+    this.props.closeCommentForm()
   }
 
   handleChange(e) {
@@ -55,10 +41,9 @@ class CreateComment extends Component {
 
   render() {
 
-    const { body, author, show } = this.state
+    const { body, author } = this.state
 
     return (
-      <ToggleDisplay show={show}>
         <div className="post-snippet">
           <div className="row">
 
@@ -102,14 +87,14 @@ class CreateComment extends Component {
 
           </div>
         </div>
-      </ToggleDisplay>
     )
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    addCommentToPost: (data) => dispatch(addComment(data))
+    addCommentToPost: (data) => dispatch(addComment(data)),
+    closeCommentForm: () => dispatch(toggleCommentForm())
   }
 }
 

@@ -40,8 +40,12 @@ class ListPosts extends Component {
   }
 
   componentDidMount() {
-    // fetch all the post from the server when the component is mounted
-    this.getPosts()
+    const { categorySelected } = this.props
+    if (categorySelected === CATEGORY_ALL) {
+      this.getPosts()
+    } else {
+      this.getCategoryPosts(categorySelected)
+    }
   }
 
   render() {

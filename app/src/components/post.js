@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { refreshPostComments } from '../actions'
+import { Link, Redirect } from 'react-router-dom'
+import { refreshPostComments, toggleCommentForm } from '../actions'
 import VoteScore from './VoteScore'
 import Comment from './Comment'
 import CreateComment from './CreateComment'
+import ToggleDisplay from 'react-toggle-display'
 import {
   fetchPostDetails,
   fetchPostComments,
@@ -13,9 +14,10 @@ import {
 class Post extends Component {
 
   state = {
-    details: {},
+    details: {
+      deleted: false,
+    },
     comments: [],
-    creatingComment: false,
   }
 
   getPostDetails() {
@@ -33,10 +35,7 @@ class Post extends Component {
 
   // Toggle to show and hide the new comment form
   onCreateComment() {
-    this.setState(() => ({
-      ...this.state,
-      creatingComment: !this.state.creatingComment,
-    }))
+    this.props.toggleCommentForm()
   }
 
   componentDidMount() {
@@ -48,9 +47,14 @@ class Post extends Component {
     const { details:post } = this.state
     const { comments } = this.props
 
+    if (post.deleted || post.deleted === undefined) {
+      return (
+        <Redirect to='/404-page-not-found'/>
+      )
+    }
+
     return (
       <div>
-
 
         {/* ***** Post Menu ***** */}
 
@@ -65,7 +69,10 @@ class Post extends Component {
 
           <div className="col-xs-6 text-right">
 
-            <Link to={"/edit-post-" + post.id}>
+            <Link to={`/${post.category}/${post.id}/delete`}>
+              <div className="btn btn-default">Delete</div>
+            </Link>
+            <Link to={`/${post.category}/${post.id}/edit`}>
               <div className="btn btn-default">Edit</div>
             </Link>
 
@@ -101,7 +108,9 @@ class Post extends Component {
           </div>
         </div>
 
-        <CreateComment parentID={post.id} show={this.state.creatingComment}/>
+        <ToggleDisplay show={this.props.commentFormOpen}>
+          <CreateComment parentID={post.id} />
+        </ToggleDisplay>
 
         {/* only show comments that haven't been deleted */}
         {comments
@@ -109,21 +118,22 @@ class Post extends Component {
           .map(comment => (
           <Comment details={comment} key={comment.id} />
         ))}
-
       </div>
     )
   }
 }
 
-function mapStateToProps({ selectedPostComments }) {
+function mapStateToProps({ selectedPostComments, commentFormOpen }) {
   return {
-    comments: selectedPostComments
+    comments: selectedPostComments,
+    commentFormOpen
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     updateComments: (data) => dispatch(refreshPostComments(data)),
+    toggleCommentForm: () => dispatch(toggleCommentForm())
   }
 }
 

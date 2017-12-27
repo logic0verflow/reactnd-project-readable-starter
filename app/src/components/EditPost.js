@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import VoteScore from './VoteScore'
 import {
   fetchPostDetails,
@@ -13,7 +13,7 @@ class EditPost extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      originalDetails: {title: '', body: '', voteScore: 0, },
+      originalDetails: {title: '', body: '', voteScore: 0, deleted: false},
       modifiedDetails: {title: '', body: ''},
     }
   }
@@ -51,6 +51,13 @@ class EditPost extends Component {
 
   render() {
     const { modifiedDetails, originalDetails } = this.state
+
+    if (originalDetails.deleted || originalDetails.deleted === undefined) {
+      return (
+        <Redirect to='/404-page-not-found'/>
+      )
+    }
+
     return (
       <div>
         {/* ***** Post Menu ***** */}
@@ -65,11 +72,11 @@ class EditPost extends Component {
           </div>
 
           <div className="col-xs-6 text-right">
-            <Link to={"/delete-post-" + this.props.id}>
+            <Link to={`/${originalDetails.category}/${this.props.id}/delete`}>
               <div className="btn btn-default">Delete</div>
             </Link>
 
-            <Link to={"/post/" + this.props.id}>
+            <Link to={`/${originalDetails.category}/${this.props.id}`}>
               <div className="btn btn-default">Edit</div>
             </Link>
           </div>
@@ -112,7 +119,7 @@ class EditPost extends Component {
             </div>
           </div>
 
-          <Link to={"/post/" + this.props.id} onClick={() => { this.submitChanges() }}>
+          <Link to={`/${originalDetails.category}/${this.props.id}`} onClick={() => { this.submitChanges() }}>
             <div className="btn btn-default">Submit</div>
           </Link>
 

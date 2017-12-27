@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import {
   fetchDeletePost,
   fetchPostDetails
@@ -8,7 +8,9 @@ import {
 class DeletePost extends Component {
 
   state = {
-    post: {}
+    post: {
+      deleted: false,
+    }
   }
 
   getPostDetails() {
@@ -33,6 +35,13 @@ class DeletePost extends Component {
 
     let postTime = new Date(post.timestamp).toLocaleString()
 
+
+    if (post.deleted || post.deleted === undefined) {
+      return (
+        <Redirect to='/404-page-not-found'/>
+      )
+    }
+
     return (
       <div>
         <div className="row">
@@ -51,7 +60,7 @@ class DeletePost extends Component {
               className="btn btn-default"
               onClick={() => { this.onDelete(this.props.id) }}
               >Yes</Link>
-            <Link to={`/edit-post-${post.id}`} className="btn btn-default">No</Link>
+            <Link to={`/${post.category}/${post.id}`} className="btn btn-default">No</Link>
           </div>
         </div>
 

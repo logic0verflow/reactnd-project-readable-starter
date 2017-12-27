@@ -4,11 +4,18 @@ export const ADD_COMMENT = 'ADD_COMMENT'
 export const REFRESH_POST_COMMENTS = 'REFRESH_POST_COMMENTS'
 export const REPLACE_COMMENT = 'REPLACE_COMMENT'
 export const REMOVE_COMMENT = 'REMOVE_COMMENT'
+export const TOGGLE_COMMENT_FORM = 'TOGGLE_COMMENT_FORM'
 
 export function openPost(post) {
   return {
     type: OPEN_POST,
     post,
+  }
+}
+
+export function toggleCommentForm() {
+  return {
+    type: TOGGLE_COMMENT_FORM
   }
 }
 

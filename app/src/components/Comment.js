@@ -98,6 +98,8 @@ class Comment extends Component {
           <div className="col-xs-3 text-right">
 
             <ToggleDisplay show={!this.state.beingModified}>
+              <input type="button" className="btn btn-default" value="Delete"
+                onClick={() => this.submitDelete()}/>
               <input type="button" className="btn btn-default" value="Edit"
                 onClick={() => this.toggleEdit()}/>
             </ToggleDisplay>

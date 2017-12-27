@@ -36,15 +36,23 @@ class PostSnippet extends Component {
             <VoteScore itemType="posts" id={post.id} voteScore={post.voteScore}/>
           </div>
 
-          <Link to={"/post/" + post.id} onClick={() => postSelected(post)}>
+          <Link to={`/${post.category}/${post.id}`} onClick={() => postSelected(post)}>
             <div className="col-xs-9 text-left">
               <p>{post.title}</p>
               <span>by <strong>{post.author}</strong> at {postTime}</span>
+              <p>in <em>{post.category}</em></p>
               <p>{this.state.commentCount} Comments</p>
             </div>
           </Link>
 
-          <div className="col-xs-2 text-right">{post.category}</div>
+          <div className="col-xs-2 text-right">
+            <Link to={`/${post.category}/${post.id}/delete`}>
+              <div className="btn btn-default">Delete</div>
+            </Link>
+            <Link to={`/${post.category}/${post.id}/edit`}>
+              <div className="btn btn-default">Edit</div>
+            </Link>
+          </div>
         </div>
       </div>
     );
